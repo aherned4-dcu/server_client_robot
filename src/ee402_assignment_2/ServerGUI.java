@@ -11,40 +11,106 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.imageio.ImageIO;
+import javax.swing.text.html.ImageView;
 
 
 @SuppressWarnings("serial")
-public class ServerGUI extends Frame implements RobotCommandListener {	
+public class ServerGUI extends Frame implements RobotCommandListener,ActionListener {	
 	int rotateValue = 540;
 	static int speedFactor = 1;
 	int x =100,y=100;	
 	Map<String,XYPositions> map = new HashMap<String,XYPositions>();
-	
+	private Frame mainFrame;
+	private Panel controlPanel;
 	
 	public ServerGUI() {
-		int height = 1000;
+		/*int height = 1000;
 		int width = 1000;
 		setTitle("Robot Locations");
 		setSize(height,width);
 		setVisible(true);
-		setLayout (new FlowLayout ());
+		Panel panel = new Panel();      
+	    panel.setBackground(Color.magenta);
+	    panel.setLayout(new FlowLayout());  
+	    panel.setSize(1000,1000);
+	    
+	    panel.addMouseListener(new MouseClicker());
+		//setLayout (new FlowLayout ());
 		setResizable(false);
 		setLocationRelativeTo(null);
 		this.addWindowListener (new WinAdap ());
 		ThreadedServer.start(this);
 		this.addMouseListener(new MouseClicker ()); 
+		*/
+		mainFrame = new Frame("Java AWT Examples");
+	      mainFrame.setSize(1000,1000);
+	      mainFrame.setLayout(new GridLayout(2, 1));
+	      mainFrame.addWindowListener(new WindowAdapter() {
+	         public void windowClosing(WindowEvent windowEvent){
+	            System.exit(0);
+	         }        
+	      });    
+
+	      controlPanel = new Panel();
+	      controlPanel.setLayout(new GridLayout(2,2));
+	      controlPanel.setSize(1000,1000);
+	      controlPanel.setBackground(Color.blue);
+	      
+	      
+	      Button addRob = new Button("Add Robot");
+		  //u.setBounds(250,475,125,25);
+	      addRob.addActionListener(this);
+	      mainFrame.add(addRob);
+	      mainFrame.add(controlPanel);
+	      mainFrame.setResizable(false);
+	      mainFrame.setVisible(true);  
+	   
+	      
 	}
+	
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getActionCommand() == "Add Robot") {
+			addRobot(1);
+			repaint();
+					
+		} else {
+			System.out.println("You clicked the button "+e.getActionCommand());
+		}
+	}
+	
+	
+	private void addRobot(int n){	         
+	      RobotPanel panel = new RobotPanel(n);      
+	      panel.setBackground(Color.gray);
+	      //panel.setLayout(new FlowLayout()); 
+	      panel.setSize(200, 200);
+	     
+	      panel.addMouseListener(new MouseAdapter(){
+	         public void mouseClicked(MouseEvent e) {
+	        	 System.out.println("Clicked ");
+	         }                
+	      });
+
+	      
+	      //repaint();
+	      Label msglabel = new Label();
+	      msglabel.setAlignment(Label.CENTER);
+	      msglabel.setText("Welcome to TutorialsPoint AWT Tutorial.");
+	      
+	      //controlPanel.add(msglabel);
+	      controlPanel.add(panel);
+	   }
+	
 	
 	
     
 	class MouseClicker extends MouseAdapter{
 		@Override
 		public void mouseClicked(MouseEvent me) {
-            super.mouseClicked(me);
+            //super.mouseClicked(me);
             System.out.println("Clicked ");//+me.getPoint());
             setBackground(Color.RED);
             repaint();
@@ -64,42 +130,11 @@ public class ServerGUI extends Frame implements RobotCommandListener {
             System.exit (0);
         }
     }
+	/*
 	
-	public void paint(Graphics g) {
-		map.put("robot",new XYPositions(x, y));
-		System.out.println("Initial Mappings are: " + map.get("robot"));
-		AffineTransform at = AffineTransform.getTranslateInstance(100,100);
-		BufferedImage robot = LoadImage("robot.png");
-		Graphics2D g2d = (Graphics2D) g;
-		at.scale(0.3,0.3);
-		at.translate(x,y);
-		at.rotate(Math.toRadians(rotateValue),robot.getWidth()/2,robot.getHeight()/2);
-		g2d.drawImage(robot, at,null);
-		g2d.setColor(Color.BLUE);
-		g2d.setStroke(new BasicStroke(6f));
-		g2d.setColor(Color.DARK_GRAY);
-		g2d.drawRect(50, 50, 900, 900);
-		
-		for (Entry<String, XYPositions> entry : map.entrySet()) {
-		    System.out.println(entry.getKey().toString() + "/" + entry.getValue().x+","+entry.getValue().y);
-		    g2d.drawOval(x, y,1,1);
-		    System.out.println(robot.getWidth()/2 + "/" + robot.getHeight()/2);
-		}
-		
-		
-	}
+	*/
 	
-	BufferedImage LoadImage(String filename) {
-		BufferedImage img = null;
-
-		try {
-			img = ImageIO.read(new File(filename));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return img;
-	}
+	
 	
 	static int[] forward_calc(int angle,int x,int y) {
 		angle = Math.abs(angle);
